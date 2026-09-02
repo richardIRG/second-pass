@@ -1,0 +1,9 @@
+node_modules/
+.vite/
+out/
+output/
+work/playwright/
+test-results/
+playwright-report/
+.DS_Store
+README 2.md

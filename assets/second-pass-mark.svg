@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" role="img" aria-labelledby="title description">
+  <title id="title">Second Pass</title>
+  <desc id="description">A bold number two with a blue editing caret inside a warm white rounded square.</desc>
+  <rect x="76" y="76" width="872" height="872" rx="202" fill="#f7f5ef"/>
+  <rect x="98" y="98" width="828" height="828" rx="180" fill="none" stroke="#222220" stroke-width="44"/>
+  <path
+    fill="#222220"
+    d="M271 392c0-121 88-204 232-204 138 0 225 74 225 189 0 88-46 151-145 220L449 690h291v128H263V703l237-169c67-48 94-83 94-132 0-52-36-84-96-84-66 0-105 43-105 116H271v-42Z"
+  />
+  <rect x="768" y="285" width="43" height="459" rx="21.5" fill="#35618f"/>
+</svg>

@@ -1,0 +1,647 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="data:,">
+  <title>HTML Editor Style Directions</title>
+  <style>
+    :root {
+      color: #191918;
+      background: #e7e6e2;
+      font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
+      font-synthesis: none;
+      text-rendering: optimizeLegibility;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { width: 100%; min-width: 980px; height: 100%; margin: 0; }
+    button { color: inherit; font: inherit; }
+
+    body {
+      --shell: #f5f4f1;
+      --toolbar: rgba(250, 250, 248, 0.96);
+      --panel: #f8f7f4;
+      --canvas: #e9e8e4;
+      --paper: #ffffff;
+      --ink: #1d1d1b;
+      --muted: #77766f;
+      --line: #d9d8d2;
+      --accent: #35618f;
+      --accent-soft: #e8eef4;
+      --accent-ink: #274c73;
+      --primary: #252523;
+      --primary-ink: #ffffff;
+      --document-accent: #315b54;
+      --panel-width-left: 224px;
+      --panel-width-right: 270px;
+      --control-radius: 8px;
+      --window-radius: 14px;
+      --paper-radius: 10px;
+      --panel-shadow: none;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      background: var(--shell);
+      color: var(--ink);
+    }
+
+    body[data-theme="notion"] {
+      --shell: #efeeeb;
+      --toolbar: #fbfbfa;
+      --panel: #f7f6f3;
+      --canvas: #eeede9;
+      --paper: #ffffff;
+      --ink: #2f2f2f;
+      --muted: #787774;
+      --line: #e2e1de;
+      --accent: #37352f;
+      --accent-soft: #e9e9e7;
+      --accent-ink: #37352f;
+      --primary: #37352f;
+      --primary-ink: #ffffff;
+      --document-accent: #7f4b37;
+      --control-radius: 5px;
+      --window-radius: 9px;
+      --paper-radius: 4px;
+    }
+
+    body[data-theme="onepassword"] {
+      --shell: #e8edf1;
+      --toolbar: rgba(249, 252, 255, 0.9);
+      --panel: #eef5fa;
+      --canvas: #e8edf1;
+      --paper: #ffffff;
+      --ink: #17212b;
+      --muted: #6c7883;
+      --line: #cfd9e1;
+      --accent: #0b69d1;
+      --accent-soft: #dcecfb;
+      --accent-ink: #0757ae;
+      --primary: #0b69d1;
+      --primary-ink: #ffffff;
+      --document-accent: #0b5cab;
+      --control-radius: 9px;
+      --window-radius: 16px;
+      --paper-radius: 13px;
+      --panel-shadow: inset -1px 0 rgba(255, 255, 255, 0.6);
+    }
+
+    .comparison-bar {
+      min-height: 86px;
+      display: grid;
+      grid-template-columns: minmax(260px, 1fr) auto minmax(260px, 1fr);
+      align-items: center;
+      gap: 24px;
+      padding: 14px 28px;
+      border-bottom: 1px solid #cfcec9;
+      background: #f5f4f1;
+    }
+
+    .comparison-title { min-width: 0; }
+    .comparison-title strong { display: block; font-size: 13px; letter-spacing: -0.01em; }
+    .comparison-title span { display: block; margin-top: 4px; color: #73726d; font-size: 11px; }
+
+    .concept-switcher {
+      display: flex;
+      gap: 4px;
+      padding: 4px;
+      border: 1px solid #d7d6d1;
+      border-radius: 12px;
+      background: #e9e8e4;
+    }
+
+    .concept-switcher button {
+      min-width: 154px;
+      border: 0;
+      border-radius: 8px;
+      padding: 9px 12px;
+      background: transparent;
+      cursor: pointer;
+      text-align: left;
+    }
+    .concept-switcher button:hover { background: rgba(255, 255, 255, 0.55); }
+    .concept-switcher button[aria-pressed="true"] { background: white; box-shadow: 0 1px 4px rgba(26, 25, 22, 0.14); }
+    .concept-switcher strong { display: block; font-size: 11px; }
+    .concept-switcher span { display: block; margin-top: 2px; color: #77766f; font-size: 9px; }
+
+    .recommendation {
+      justify-self: end;
+      max-width: 310px;
+      color: #55544f;
+      font-size: 10px;
+      line-height: 1.4;
+      text-align: right;
+    }
+    .recommendation strong { color: #252523; }
+
+    .showcase {
+      flex: 1;
+      min-height: 0;
+      padding: 20px 24px 24px;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 50% -30%, rgba(255, 255, 255, 0.7), transparent 42%),
+        #d9d8d4;
+    }
+
+    .editor-window {
+      width: 100%;
+      height: 100%;
+      min-height: 620px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      border: 1px solid rgba(45, 44, 40, 0.16);
+      border-radius: var(--window-radius);
+      background: var(--shell);
+      box-shadow: 0 24px 65px rgba(34, 33, 29, 0.18);
+      transition: border-radius 180ms ease, background 180ms ease;
+    }
+
+    .titlebar {
+      height: 58px;
+      flex: 0 0 58px;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      gap: 16px;
+      padding: 0 14px 0 18px;
+      border-bottom: 1px solid var(--line);
+      background: var(--toolbar);
+      backdrop-filter: blur(24px) saturate(1.2);
+    }
+
+    .window-leading, .window-actions, .view-switch, .tool-group { display: flex; align-items: center; }
+    .window-leading { min-width: 0; gap: 14px; }
+    .traffic-lights { display: flex; gap: 7px; }
+    .traffic-lights span { width: 11px; height: 11px; border-radius: 50%; }
+    .traffic-lights span:nth-child(1) { background: #ff5f57; }
+    .traffic-lights span:nth-child(2) { background: #febc2e; }
+    .traffic-lights span:nth-child(3) { background: #28c840; }
+
+    .app-identity { min-width: 0; display: flex; align-items: center; gap: 9px; }
+    .app-mark {
+      width: 28px;
+      height: 28px;
+      display: grid;
+      place-items: center;
+      flex: 0 0 auto;
+      border-radius: 7px;
+      color: white;
+      background: var(--primary);
+      transition: border-radius 180ms ease, background 180ms ease;
+    }
+    .app-mark svg { width: 15px; height: 15px; }
+    [data-theme="onepassword"] .app-mark { border-radius: 50%; background: linear-gradient(145deg, #2180e9, #0754b8); box-shadow: inset 0 1px rgba(255, 255, 255, 0.3); }
+    [data-theme="notion"] .app-mark { border: 1px solid #37352f; border-radius: 3px; color: #37352f; background: white; box-shadow: 2px 2px 0 #37352f; }
+
+    .file-title { min-width: 0; }
+    .file-title strong { display: block; overflow: hidden; font-size: 12px; text-overflow: ellipsis; white-space: nowrap; }
+    .file-title span { display: block; margin-top: 2px; color: var(--muted); font-size: 9px; }
+
+    .view-switch {
+      gap: 2px;
+      padding: 3px;
+      border: 1px solid var(--line);
+      border-radius: calc(var(--control-radius) + 2px);
+      background: color-mix(in srgb, var(--canvas) 68%, var(--toolbar));
+    }
+    .view-switch button {
+      border: 0;
+      border-radius: var(--control-radius);
+      padding: 6px 14px;
+      color: var(--muted);
+      background: transparent;
+      cursor: pointer;
+      font-size: 10px;
+      font-weight: 650;
+    }
+    .view-switch button.is-active { color: var(--ink); background: var(--paper); box-shadow: 0 1px 3px rgba(24, 24, 21, 0.12); }
+    [data-theme="notion"] .view-switch { border-color: transparent; background: #f1f1ef; }
+    [data-theme="notion"] .view-switch button.is-active { box-shadow: none; }
+
+    .window-actions { justify-content: flex-end; gap: 7px; min-width: 0; }
+    .tool-group { gap: 3px; padding-right: 7px; margin-right: 1px; border-right: 1px solid var(--line); }
+    .toolbar-button, .icon-button {
+      height: 31px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      border: 1px solid transparent;
+      border-radius: var(--control-radius);
+      color: var(--muted);
+      background: transparent;
+      cursor: pointer;
+      font-size: 10px;
+      font-weight: 650;
+    }
+    .toolbar-button { padding: 0 9px; }
+    .icon-button { width: 31px; padding: 0; }
+    .toolbar-button:hover, .icon-button:hover, .toolbar-button.is-active { color: var(--ink); border-color: var(--line); background: var(--paper); }
+    .toolbar-button svg, .icon-button svg { width: 14px; height: 14px; }
+
+    .save-button {
+      height: 32px;
+      border: 0;
+      border-radius: var(--control-radius);
+      padding: 0 15px;
+      color: var(--primary-ink);
+      background: var(--primary);
+      box-shadow: 0 2px 6px color-mix(in srgb, var(--primary) 20%, transparent);
+      cursor: pointer;
+      font-size: 10px;
+      font-weight: 750;
+    }
+
+    .workspace { flex: 1; min-height: 0; display: flex; overflow: hidden; }
+    .workspace.hide-outline .outline-panel { display: none; }
+    .workspace.hide-inspector .inspector-panel { display: none; }
+
+    .side-panel {
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      flex: 0 0 auto;
+      background: var(--panel);
+      box-shadow: var(--panel-shadow);
+    }
+    .outline-panel { width: var(--panel-width-left); border-right: 1px solid var(--line); }
+    .inspector-panel { width: var(--panel-width-right); border-left: 1px solid var(--line); }
+    [data-theme="onepassword"] .outline-panel { background: linear-gradient(180deg, #eff7fd, #eaf2f8); }
+    [data-theme="onepassword"] .inspector-panel { background: #f5f9fc; }
+
+    .panel-header {
+      min-height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 0 13px;
+      border-bottom: 1px solid var(--line);
+    }
+    .panel-header strong { display: block; font-size: 11px; }
+    .panel-header span { display: block; margin-top: 2px; color: var(--muted); font-size: 8px; }
+    .panel-header button { width: 25px; height: 25px; border: 0; border-radius: 6px; color: var(--muted); background: transparent; cursor: pointer; }
+    .panel-header button:hover { color: var(--ink); background: var(--accent-soft); }
+
+    .outline-list { flex: 1; overflow: auto; padding: 7px; }
+    .outline-item {
+      width: 100%;
+      display: grid;
+      grid-template-columns: 19px minmax(0, 1fr);
+      gap: 7px;
+      border: 1px solid transparent;
+      border-radius: var(--control-radius);
+      padding: 8px 7px;
+      background: transparent;
+      cursor: pointer;
+      text-align: left;
+    }
+    .outline-item:hover { background: color-mix(in srgb, var(--accent-soft) 45%, transparent); }
+    .outline-item.is-active { border-color: color-mix(in srgb, var(--accent) 20%, var(--line)); background: var(--accent-soft); }
+    [data-theme="notion"] .outline-item.is-active { border-color: transparent; }
+    .outline-type { color: var(--muted); font: 700 9px/1.35 ui-monospace, SFMono-Regular, Menlo, monospace; }
+    .outline-copy { min-width: 0; }
+    .outline-copy strong { display: block; overflow: hidden; color: var(--accent-ink); font-size: 9px; text-overflow: ellipsis; white-space: nowrap; }
+    .outline-copy span { display: block; overflow: hidden; margin-top: 3px; color: var(--muted); font-size: 9px; text-overflow: ellipsis; white-space: nowrap; }
+
+    .outline-footer { display: flex; justify-content: space-between; padding: 9px 12px; border-top: 1px solid var(--line); color: var(--muted); font-size: 8px; }
+
+    .canvas {
+      flex: 1;
+      min-width: 0;
+      min-height: 0;
+      overflow: auto;
+      padding: 24px;
+      background: var(--canvas);
+      transition: background 180ms ease;
+    }
+
+    .document-page {
+      width: min(760px, 100%);
+      min-height: 100%;
+      margin: 0 auto;
+      border: 1px solid color-mix(in srgb, var(--line) 82%, transparent);
+      border-radius: var(--paper-radius);
+      padding: 58px 66px 70px;
+      background: var(--paper);
+      box-shadow: 0 8px 28px rgba(35, 34, 30, 0.07);
+      transition: border-radius 180ms ease, box-shadow 180ms ease;
+    }
+    [data-theme="notion"] .document-page { border-color: #e7e6e3; box-shadow: 0 1px 2px rgba(35, 33, 29, 0.04); }
+    [data-theme="onepassword"] .document-page { box-shadow: 0 12px 34px rgba(37, 69, 94, 0.11); }
+
+    .document-kicker { margin: 0 0 18px; color: var(--document-accent); font-size: 10px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; }
+    .document-page h1 { max-width: 640px; margin: 0; color: #222320; font: 650 clamp(30px, 3.1vw, 45px)/1.08 ui-serif, Georgia, "Times New Roman", serif; letter-spacing: -0.035em; }
+    [data-theme="onepassword"] .document-page h1 { font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif; font-weight: 720; }
+    .document-deck { max-width: 650px; margin: 20px 0 0; color: #686963; font-size: 15px; line-height: 1.55; }
+
+    .selected-copy {
+      position: relative;
+      margin: 28px -11px 0;
+      border: 1px solid var(--accent);
+      border-radius: calc(var(--control-radius) + 1px);
+      padding: 10px;
+      color: #363733;
+      box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 10%, transparent);
+      font-size: 13px;
+      line-height: 1.55;
+    }
+    .selected-copy::before {
+      content: "Editing";
+      position: absolute;
+      top: -10px;
+      left: 10px;
+      border-radius: 4px;
+      padding: 2px 5px;
+      color: white;
+      background: var(--accent);
+      font-size: 7px;
+      font-weight: 750;
+      letter-spacing: 0.04em;
+    }
+    [data-theme="notion"] .selected-copy { box-shadow: none; }
+
+    .document-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 28px; }
+    .document-card { border: 1px solid #e6e6e2; border-radius: 8px; padding: 14px; background: #fcfcfb; }
+    .document-card span { display: block; color: #85857e; font-size: 8px; font-weight: 750; letter-spacing: 0.08em; text-transform: uppercase; }
+    .document-card strong { display: block; margin-top: 7px; color: #2f302d; font-size: 17px; }
+    .document-card small { display: block; margin-top: 3px; color: #7e7f79; font-size: 9px; line-height: 1.35; }
+
+    .document-section { display: grid; grid-template-columns: 120px 1fr; gap: 26px; margin-top: 34px; padding-top: 24px; border-top: 1px solid #ecece8; }
+    .document-section h2 { margin: 0; color: #333430; font-size: 12px; }
+    .document-section p { margin: 0; color: #666761; font-size: 12px; line-height: 1.6; }
+
+    .inspector-scroll { flex: 1; overflow: auto; }
+    .inspector-section { padding: 14px; border-bottom: 1px solid var(--line); }
+    [data-theme="onepassword"] .inspector-section { margin: 9px; border: 1px solid #d8e3eb; border-radius: 11px; padding: 12px; background: rgba(255, 255, 255, 0.72); }
+    [data-theme="onepassword"] .inspector-section + .inspector-section { margin-top: 0; }
+    .inspector-section h3 { margin: 0 0 10px; color: var(--muted); font-size: 8px; letter-spacing: 0.09em; text-transform: uppercase; }
+    .element-chip { display: inline-flex; align-items: center; border-radius: 5px; padding: 5px 7px; color: var(--accent-ink); background: var(--accent-soft); font: 700 9px ui-monospace, SFMono-Regular, Menlo, monospace; }
+
+    .property-list { display: grid; gap: 8px; margin: 12px 0 0; }
+    .property-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .property-row span { color: var(--muted); font-size: 9px; }
+    .property-row strong { overflow: hidden; font-size: 9px; font-weight: 600; text-overflow: ellipsis; white-space: nowrap; }
+
+    .formatting-row { display: grid; grid-template-columns: repeat(6, 1fr); gap: 4px; }
+    .formatting-row button { height: 29px; border: 1px solid var(--line); border-radius: 7px; color: var(--ink); background: var(--paper); cursor: pointer; font-size: 10px; }
+    .formatting-row button.is-active { border-color: color-mix(in srgb, var(--accent) 35%, var(--line)); color: var(--accent-ink); background: var(--accent-soft); }
+
+    .field-label { display: block; margin-bottom: 6px; color: var(--muted); font-size: 9px; }
+    .text-field { width: 100%; border: 1px solid var(--line); border-radius: 7px; padding: 8px 9px; color: var(--ink); background: var(--paper); outline: none; font-size: 9px; }
+    .text-field:focus { border-color: var(--accent); box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 12%, transparent); }
+
+    .statusbar {
+      min-height: 25px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 0 12px;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      background: var(--toolbar);
+      font-size: 8px;
+    }
+    .statusbar span:last-child { margin-left: auto; }
+    .saved-dot { width: 6px; height: 6px; border-radius: 50%; background: #3c8b5f; }
+
+    .theme-note {
+      position: fixed;
+      right: 34px;
+      bottom: 38px;
+      z-index: 20;
+      max-width: 260px;
+      border: 1px solid rgba(24, 24, 21, 0.12);
+      border-radius: 10px;
+      padding: 10px 12px;
+      color: #54534e;
+      background: rgba(255, 255, 255, 0.92);
+      box-shadow: 0 10px 28px rgba(34, 33, 29, 0.13);
+      backdrop-filter: blur(12px);
+      font-size: 9px;
+      line-height: 1.45;
+      pointer-events: none;
+    }
+    .theme-note strong { display: block; margin-bottom: 3px; color: #252523; font-size: 10px; }
+
+    @media (max-width: 1180px) {
+      .comparison-bar { grid-template-columns: 1fr auto; }
+      .recommendation { display: none; }
+      .concept-switcher button { min-width: 130px; }
+      .toolbar-button span { display: none; }
+      .toolbar-button { width: 31px; padding: 0; }
+      .document-page { padding-inline: 42px; }
+    }
+  </style>
+</head>
+<body data-theme="hybrid">
+  <header class="comparison-bar">
+    <div class="comparison-title">
+      <strong>Editor style explorations</strong>
+      <span id="concept-description">Calm document canvas with confident Mac utility chrome.</span>
+    </div>
+    <nav class="concept-switcher" aria-label="Design direction">
+      <button type="button" data-concept="notion" aria-pressed="false">
+        <strong>01 · Editorial Quiet</strong>
+        <span>Notion-led</span>
+      </button>
+      <button type="button" data-concept="onepassword" aria-pressed="false">
+        <strong>02 · Native Utility</strong>
+        <span>1Password-led</span>
+      </button>
+      <button type="button" data-concept="hybrid" aria-pressed="true">
+        <strong>03 · Quiet Workbench</strong>
+        <span>Recommended hybrid</span>
+      </button>
+    </nav>
+    <div class="recommendation"><strong>Same product, three visual systems.</strong> Use the controls to compare hierarchy, density, and interaction color.</div>
+  </header>
+
+  <main class="showcase">
+    <section class="editor-window" aria-label="HTML editor mockup">
+      <header class="titlebar">
+        <div class="window-leading">
+          <div class="traffic-lights" aria-hidden="true"><span></span><span></span><span></span></div>
+          <div class="app-identity">
+            <span class="app-mark" aria-hidden="true">
+              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M5.5 2.8h6l3 3v11.4H5.5z"/><path d="M11.5 2.8v3h3M8 10h4M8 13h4"/></svg>
+            </span>
+            <div class="file-title"><strong>product-brief.html</strong><span>Saved locally</span></div>
+          </div>
+        </div>
+
+        <nav class="view-switch" aria-label="Editor mode">
+          <button type="button" class="is-active">Edit</button>
+          <button type="button">Preview</button>
+          <button type="button">Review</button>
+        </nav>
+
+        <div class="window-actions">
+          <div class="tool-group">
+            <button type="button" class="toolbar-button is-active" data-panel="outline" aria-pressed="true">
+              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3.5 4.5h13M3.5 10h13M3.5 15.5h13"/><path d="M6.5 3v3M11 8.5v3M8.5 14v3"/></svg><span>Outline</span>
+            </button>
+            <button type="button" class="toolbar-button is-active" data-panel="inspector" aria-pressed="true">
+              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3.5" width="14" height="13" rx="2"/><path d="M12 3.5v13M14.5 7h.01M14.5 10h.01"/></svg><span>Inspector</span>
+            </button>
+          </div>
+          <button type="button" class="icon-button" aria-label="Undo">
+            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M7 6 3.5 9.5 7 13"/><path d="M4 9.5h6a5 5 0 0 1 5 5"/></svg>
+          </button>
+          <button type="button" class="icon-button" aria-label="More actions">
+            <svg viewBox="0 0 20 20" fill="currentColor"><circle cx="4.5" cy="10" r="1.2"/><circle cx="10" cy="10" r="1.2"/><circle cx="15.5" cy="10" r="1.2"/></svg>
+          </button>
+          <button type="button" class="save-button">Save</button>
+        </div>
+      </header>
+
+      <div class="workspace">
+        <aside class="side-panel outline-panel" aria-label="Document outline">
+          <header class="panel-header">
+            <div><strong>Outline</strong><span>7 editable regions</span></div>
+            <button type="button" data-close-panel="outline" aria-label="Close outline">×</button>
+          </header>
+          <div class="outline-list">
+            <button type="button" class="outline-item"><span class="outline-type">H1</span><span class="outline-copy"><strong>Document title</strong><span>A faster way to finish…</span></span></button>
+            <button type="button" class="outline-item"><span class="outline-type">P</span><span class="outline-copy"><strong>Introduction</strong><span>AI can get a document…</span></span></button>
+            <button type="button" class="outline-item is-active"><span class="outline-type">P</span><span class="outline-copy"><strong>Problem statement</strong><span>Small corrections should…</span></span></button>
+            <button type="button" class="outline-item"><span class="outline-type">H2</span><span class="outline-copy"><strong>Product principles</strong><span>Fast, safe, local</span></span></button>
+            <button type="button" class="outline-item"><span class="outline-type">P</span><span class="outline-copy"><strong>Workflow</strong><span>Open, edit, review, save</span></span></button>
+            <button type="button" class="outline-item"><span class="outline-type">A</span><span class="outline-copy"><strong>Research link</strong><span>View supporting evidence</span></span></button>
+            <button type="button" class="outline-item"><span class="outline-type">TD</span><span class="outline-copy"><strong>Success metric</strong><span>Time to correction</span></span></button>
+          </div>
+          <footer class="outline-footer"><span>6 source regions</span><span>1 scripted</span></footer>
+        </aside>
+
+        <section class="canvas" aria-label="Document canvas">
+          <article class="document-page">
+            <p class="document-kicker">Product brief · August 2026</p>
+            <h1>A faster way to finish AI-generated documents</h1>
+            <p class="document-deck">AI can get a document ninety percent of the way there. The last ten percent should feel like editing, not another conversation.</p>
+            <p class="selected-copy">Small corrections should take seconds. Select the text on the rendered page, make the change directly, and save only that source fragment back to the original HTML.</p>
+
+            <div class="document-grid">
+              <div class="document-card"><span>Workflow</span><strong>4 steps</strong><small>Open, edit, review, save</small></div>
+              <div class="document-card"><span>Write surface</span><strong>1 file</strong><small>Only the selected HTML changes</small></div>
+              <div class="document-card"><span>Storage</span><strong>Local</strong><small>No account or database required</small></div>
+            </div>
+
+            <section class="document-section">
+              <h2>Product principle</h2>
+              <p>Keep the application quiet enough that every document can retain its own visual identity. Editing controls should be immediately available, then disappear when they are not needed.</p>
+            </section>
+          </article>
+        </section>
+
+        <aside class="side-panel inspector-panel" aria-label="Selection inspector">
+          <header class="panel-header">
+            <div><strong>Inspector</strong><span>Paragraph selected</span></div>
+            <button type="button" data-close-panel="inspector" aria-label="Close inspector">×</button>
+          </header>
+          <div class="inspector-scroll">
+            <section class="inspector-section">
+              <h3>Selection</h3>
+              <span class="element-chip">p#problem</span>
+              <div class="property-list">
+                <div class="property-row"><span>Element</span><strong>Paragraph</strong></div>
+                <div class="property-row"><span>Source</span><strong>1142–1388</strong></div>
+                <div class="property-row"><span>Characters</span><strong>201</strong></div>
+              </div>
+            </section>
+            <section class="inspector-section">
+              <h3>Formatting</h3>
+              <div class="formatting-row" aria-label="Formatting controls">
+                <button type="button" class="is-active"><strong>B</strong></button>
+                <button type="button"><em>I</em></button>
+                <button type="button">•≡</button>
+                <button type="button">1≡</button>
+                <button type="button">↵</button>
+                <button type="button">⊘</button>
+              </div>
+            </section>
+            <section class="inspector-section">
+              <h3>Link</h3>
+              <label class="field-label" for="link-field">Destination</label>
+              <input class="text-field" id="link-field" value="https://example.com/research">
+            </section>
+          </div>
+        </aside>
+      </div>
+
+      <footer class="statusbar"><span>p#problem</span><span class="saved-dot" aria-hidden="true"></span><span>Autosaved just now</span><span>Click text to edit</span></footer>
+    </section>
+  </main>
+
+  <div class="theme-note" aria-live="polite"><strong id="note-title">Quiet Workbench</strong><span id="note-copy">Warm neutral shell, restrained blue interaction color, and a black primary action.</span></div>
+
+  <script>
+    const concepts = {
+      notion: {
+        description: 'Editorial restraint with almost no application color.',
+        title: 'Editorial Quiet',
+        note: 'Warm paper, square geometry, low contrast panels, and a monochrome primary action.',
+      },
+      onepassword: {
+        description: 'A polished Mac utility with confident system-blue interactions.',
+        title: 'Native Utility',
+        note: 'Cool translucent chrome, soft blue sidebars, rounded controls, and native-feeling depth.',
+      },
+      hybrid: {
+        description: 'Calm document canvas with confident Mac utility chrome.',
+        title: 'Quiet Workbench',
+        note: 'Warm neutral shell, restrained blue interaction color, and a black primary action.',
+      },
+    };
+
+    const params = new URLSearchParams(window.location.search);
+    const initialTheme = concepts[params.get('theme')] ? params.get('theme') : 'hybrid';
+
+    function setTheme(theme) {
+      const concept = concepts[theme];
+      document.body.dataset.theme = theme;
+      document.querySelectorAll('[data-concept]').forEach((button) => {
+        button.setAttribute('aria-pressed', String(button.dataset.concept === theme));
+      });
+      document.getElementById('concept-description').textContent = concept.description;
+      document.getElementById('note-title').textContent = concept.title;
+      document.getElementById('note-copy').textContent = concept.note;
+      const nextUrl = new URL(window.location.href);
+      nextUrl.searchParams.set('theme', theme);
+      window.history.replaceState({}, '', nextUrl);
+    }
+
+    document.querySelectorAll('[data-concept]').forEach((button) => {
+      button.addEventListener('click', () => setTheme(button.dataset.concept));
+    });
+
+    document.querySelectorAll('.view-switch button').forEach((button) => {
+      button.addEventListener('click', () => {
+        document.querySelectorAll('.view-switch button').forEach((item) => item.classList.remove('is-active'));
+        button.classList.add('is-active');
+      });
+    });
+
+    function togglePanel(panelName) {
+      const workspace = document.querySelector('.workspace');
+      const control = document.querySelector(`[data-panel="${panelName}"]`);
+      const hiddenClass = `hide-${panelName}`;
+      workspace.classList.toggle(hiddenClass);
+      const isOpen = !workspace.classList.contains(hiddenClass);
+      control.classList.toggle('is-active', isOpen);
+      control.setAttribute('aria-pressed', String(isOpen));
+    }
+
+    document.querySelectorAll('[data-panel]').forEach((button) => button.addEventListener('click', () => togglePanel(button.dataset.panel)));
+    document.querySelectorAll('[data-close-panel]').forEach((button) => button.addEventListener('click', () => togglePanel(button.dataset.closePanel)));
+    document.querySelectorAll('.outline-item').forEach((button) => button.addEventListener('click', () => {
+      document.querySelectorAll('.outline-item').forEach((item) => item.classList.remove('is-active'));
+      button.classList.add('is-active');
+    }));
+
+    setTheme(initialTheme);
+  </script>
+</body>
+</html>

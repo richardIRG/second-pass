@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Editable mockup</title>
+    <link rel="stylesheet" href="accent.css">
+    <style>
+      body { margin: 0; font-family: system-ui, sans-serif; background: #f6f4ef; color: #24231f; }
+      main { max-width: 760px; margin: 70px auto; padding: 48px; border-radius: 22px; background: white; }
+      h1 { font: 700 54px/1.02 Georgia, serif; letter-spacing: -0.04em; }
+      p { color: #656159; font-size: 20px; line-height: 1.55; }
+      button { padding: 13px 18px; border: 0; border-radius: 9px; color: white; background: #5f52d9; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1 id="headline">This is the actual headline I wanted</h1>
+      <p id="intro">Change the copy to this not that</p>
+      <p><a href="https://insighthealthcareadvisors.com">Read the original brief</a></p>
+      <img id="portrait" alt="test 2" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Crect width='80' height='80' rx='20' fill='%23e5e0ff'/%3E%3C/svg%3E">
+      <button id="counter" type="button">TEST: 0</button>
+    </main>
+    <script>
+      const counter = document.querySelector('#counter');
+      counter.addEventListener('click', () => {
+        const current = Number(counter.textContent.split(': ')[1]);
+        counter.textContent = `Interactions: ${current + 1}`;
+      });
+    </script>
+  </body>
+</html>
