@@ -3,6 +3,7 @@ import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 
 import { _electron as electron, expect, test } from '@playwright/test';
+import { firstEditorWindow } from './editor-window';
 
 test('creates lists and updates existing links', async () => {
   const directory = await mkdtemp(join(tmpdir(), 'codex-html-editor-rich-text-'));
@@ -14,7 +15,7 @@ test('creates lists and updates existing links', async () => {
   });
 
   try {
-    const page = await electronApp.firstWindow();
+    const page = await firstEditorWindow(electronApp);
     const preview = page.frameLocator('iframe');
     const intro = preview.locator('#intro');
     await intro.click();
@@ -47,7 +48,7 @@ test('deletes a selected source element and saves the removal', async () => {
   const electronApp = await electron.launch({ args: ['.vite/build/main.js', editablePath] });
 
   try {
-    const page = await electronApp.firstWindow();
+    const page = await firstEditorWindow(electronApp);
     const preview = page.frameLocator('iframe');
     await preview.locator('#remove-me').click();
     await page.getByRole('button', { name: 'Delete element' }).click();
@@ -76,7 +77,7 @@ test('replaces an image through the file picker and saves a portable source path
   });
 
   try {
-    const page = await electronApp.firstWindow();
+    const page = await firstEditorWindow(electronApp);
     const portrait = page.frameLocator('iframe').locator('#portrait');
     await portrait.click();
     await page.getByRole('button', { name: 'Replace' }).click();

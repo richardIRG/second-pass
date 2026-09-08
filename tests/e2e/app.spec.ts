@@ -3,6 +3,7 @@ import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 
 import { _electron as electron, expect, test } from '@playwright/test';
+import { firstEditorWindow } from './editor-window';
 
 const fixturePath = resolve('tests/fixtures/mockup.html');
 const fixtureStylesheetPath = resolve('tests/fixtures/accent.css');
@@ -23,7 +24,7 @@ test('edits rich text, saves source, and runs sandboxed interactions', async () 
   });
 
   try {
-    const page = await electronApp.firstWindow();
+    const page = await firstEditorWindow(electronApp);
     // Keep panel controls accessible when the compact toolbar hides their text.
     await page.setViewportSize({ width: 1100, height: 800 });
     await expect(page.locator('.document-title strong')).toHaveText('mockup.html');
@@ -96,7 +97,7 @@ test('detects an external change while visual edits are unsaved', async () => {
   });
 
   try {
-    const page = await electronApp.firstWindow();
+    const page = await firstEditorWindow(electronApp);
     const headline = page.frameLocator('iframe').locator('#headline');
     await headline.click();
     await headline.press(process.platform === 'darwin' ? 'Meta+A' : 'Control+A');
@@ -127,7 +128,7 @@ test('merges a non-overlapping external change and supports responsive preview s
   });
 
   try {
-    const page = await electronApp.firstWindow();
+    const page = await firstEditorWindow(electronApp);
     const preview = page.frameLocator('iframe');
     const headline = preview.locator('#headline');
     await headline.click();
@@ -163,7 +164,7 @@ test('recovers an autosaved draft after an interrupted session', async () => {
   });
   let electronApp = await launch();
   try {
-    let page = await electronApp.firstWindow();
+    let page = await firstEditorWindow(electronApp);
     const headline = page.frameLocator('iframe').locator('#headline');
     await headline.click();
     await headline.press(process.platform === 'darwin' ? 'Meta+A' : 'Control+A');
@@ -172,7 +173,7 @@ test('recovers an autosaved draft after an interrupted session', async () => {
     await electronApp.evaluate(({ app }) => app.exit(0));
 
     electronApp = await launch();
-    page = await electronApp.firstWindow();
+    page = await firstEditorWindow(electronApp);
     await expect(page.getByText('Unsaved work found')).toBeVisible();
     await page.getByRole('button', { name: 'Restore' }).click();
     await expect(page.frameLocator('iframe').locator('#headline')).toHaveText('Recovered draft headline');
@@ -200,7 +201,7 @@ test('opens the task HTML and refreshes it after an approved Codex change', asyn
   });
 
   try {
-    const page = await electronApp.firstWindow();
+    const page = await firstEditorWindow(electronApp);
     await expect(page.getByRole('heading', { name: 'Pick up where Codex left off' })).toBeVisible();
     await page.screenshot({ path: 'output/playwright/260825 RJM Second Pass Task First Onboarding v0.png' });
     await page.getByLabel('Codex task link or thread ID').fill('https://chatgpt.com/codex/tasks/0198e998-7b74-7a80-8b0f-a334bd81d30f');
@@ -246,7 +247,7 @@ test('watches an HTML file when the Codex task already has an active writer', as
   });
 
   try {
-    const page = await electronApp.firstWindow();
+    const page = await firstEditorWindow(electronApp);
     await page.getByLabel('Codex task link or thread ID').fill('codex://threads/0198e998-7b74-7a80-8b0f-a334bd81d30f');
     await page.getByRole('button', { name: 'Connect task' }).click();
     await expect(page.locator('.document-title strong')).toHaveText('mockup.html');
@@ -286,7 +287,7 @@ test('reads the requested task when resume reports a stale rollout ID', async ()
   });
 
   try {
-    const page = await electronApp.firstWindow();
+    const page = await firstEditorWindow(electronApp);
     await page.getByLabel('Codex task link or thread ID').fill('codex://threads/0198e998-7b74-7a80-8b0f-a334bd81d30f');
     await page.getByRole('button', { name: 'Connect task' }).click();
     await expect(page.locator('.document-title strong')).toHaveText('mockup.html');
@@ -315,7 +316,7 @@ test('rejects a framework mount shell discovered from a task', async () => {
   });
 
   try {
-    const page = await electronApp.firstWindow();
+    const page = await firstEditorWindow(electronApp);
     await page.getByLabel('Codex task link or thread ID').fill('codex://threads/0198e998-7b74-7a80-8b0f-a334bd81d30f');
     await page.getByRole('button', { name: 'Connect task' }).click();
     await expect(page.getByRole('alert')).toContainText('React or app entrypoint');
@@ -347,7 +348,7 @@ test('skips a framework entrypoint when the task also contains standalone HTML',
   });
 
   try {
-    const page = await electronApp.firstWindow();
+    const page = await firstEditorWindow(electronApp);
     await page.getByLabel('Codex task link or thread ID').fill('codex://threads/0198e998-7b74-7a80-8b0f-a334bd81d30f');
     await page.getByRole('button', { name: 'Connect task' }).click();
     await expect(page.locator('.document-title strong')).toHaveText('rendered-page.html');
@@ -400,7 +401,7 @@ createRoot(document.getElementById('root')!).render(<Page />);
   });
 
   try {
-    const page = await electronApp.firstWindow();
+    const page = await firstEditorWindow(electronApp);
     await page.getByLabel('Codex task link or thread ID').fill('codex://threads/0198e998-7b74-7a80-8b0f-a334bd81d30f');
     await page.getByRole('button', { name: 'Connect task' }).click();
     await expect(page.locator('.document-title strong')).toHaveText('vinext-test-project');
