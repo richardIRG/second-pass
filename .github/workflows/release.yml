@@ -46,6 +46,8 @@ jobs:
         run: pnpm prepare:codex
       - name: Build installers
         run: pnpm make
+      - name: Prepare the Electron test runtime
+        run: pnpm prepare:electron
       - name: Test editing and Codex integration
         run: pnpm exec playwright test
       - name: Verify Mac app signature and disk image
