@@ -66,6 +66,7 @@ jobs:
           $app = Start-Process -FilePath $installed.FullName -PassThru
           Start-Sleep -Seconds 8
           if ($app.HasExited -and $app.ExitCode -ne 0) { throw 'Installed application failed to launch.' }
+          if (-not (Get-Process SecondPass -ErrorAction SilentlyContinue)) { throw 'Installed application did not stay running.' }
           Get-Process SecondPass -ErrorAction SilentlyContinue | Stop-Process
       - name: Prepare download names and checksums
         run: node scripts/collect-release.mjs
@@ -104,4 +105,3 @@ jobs:
             --verify-tag --latest \
             --title "Second Pass $RELEASE_TAG" \
             --notes-file docs/release-notes.md
-
