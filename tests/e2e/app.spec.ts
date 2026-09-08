@@ -24,6 +24,8 @@ test('edits rich text, saves source, and runs sandboxed interactions', async () 
 
   try {
     const page = await electronApp.firstWindow();
+    // Keep panel controls accessible when the compact toolbar hides their text.
+    await page.setViewportSize({ width: 1100, height: 800 });
     await expect(page.locator('.document-title strong')).toHaveText('mockup.html');
     const preview = page.frameLocator('iframe');
     const headline = preview.locator('#headline');

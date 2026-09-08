@@ -1321,13 +1321,13 @@ export function App() {
                 </label>
               ) : null}
               <div className="workspace-toggles" aria-label="Workspace panels">
-                <button type="button" className={`panel-toggle${codexOpen ? ' is-active' : ''}`} aria-pressed={codexOpen} onClick={() => setCodexOpen((open) => !open)}>
+                <button type="button" className={`panel-toggle${codexOpen ? ' is-active' : ''}`} aria-label="Codex" title="Codex" aria-pressed={codexOpen} onClick={() => setCodexOpen((open) => !open)}>
                   <UiIcon name="codex" /><span>Codex</span>{codexStatus === 'working' ? <i className="toolbar-working-dot" aria-label="Codex is working" /> : null}
                 </button>
-                <button type="button" className={`panel-toggle${outlineOpen ? ' is-active' : ''}`} aria-pressed={outlineOpen} disabled={mode !== 'edit' || Boolean(project)} onClick={() => setOutlineOpen((open) => !open)}>
+                <button type="button" className={`panel-toggle${outlineOpen ? ' is-active' : ''}`} aria-label="Outline" title="Outline" aria-pressed={outlineOpen} disabled={mode !== 'edit' || Boolean(project)} onClick={() => setOutlineOpen((open) => !open)}>
                   <UiIcon name="list" /><span>Outline</span>
                 </button>
-                <button type="button" className={`panel-toggle${inspectorOpen ? ' is-active' : ''}`} aria-pressed={inspectorOpen} disabled={mode !== 'edit'} onClick={() => setInspectorOpen((open) => !open)}>
+                <button type="button" className={`panel-toggle${inspectorOpen ? ' is-active' : ''}`} aria-label="Inspector" title="Inspector" aria-pressed={inspectorOpen} disabled={mode !== 'edit'} onClick={() => setInspectorOpen((open) => !open)}>
                   <UiIcon name="inspector" /><span>Inspector</span>
                 </button>
               </div>
