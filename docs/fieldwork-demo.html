@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Fieldwork, a fictional creative retreat. A standalone sample page for the Second Pass demo.">
+  <meta name="theme-color" content="#f6f3ea">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' fill='%23f6f3ea'/%3E%3Cpath d='M3 29L14 9l8 15 5-9 10 14M3 35h34' fill='none' stroke='%23213f34' stroke-width='2.3'/%3E%3C/svg%3E">
+  <title>Fieldwork | A weekend with room to think</title>
+  <style>
+    :root { color-scheme: light; --paper:#f6f3ea; --ink:#213f34; --muted:#5c695f; --line:#d4d7c8; --clay:#a9492f; --wash:#e8ebdf; }
+    * { box-sizing:border-box; }
+    html { scroll-behavior:smooth; scroll-padding-top:24px; }
+    body { margin:0; background:var(--paper); color:var(--ink); font-family:Arial,Helvetica,sans-serif; -webkit-font-smoothing:antialiased; }
+    a { color:inherit; text-underline-offset:4px; }
+    a:focus-visible { outline:3px solid var(--clay); outline-offset:6px; }
+    .page { width:100%; max-width:1360px; margin:0 auto; padding:0 56px; }
+    .masthead { min-height:100px; display:flex; align-items:center; justify-content:space-between; gap:24px; border-bottom:1px solid var(--line); }
+    .identity { display:flex; align-items:center; gap:12px; }
+    .brand-mark { width:32px; height:32px; flex:none; }
+    .wordmark { margin:0; font-size:25px; font-weight:700; letter-spacing:-1.3px; line-height:1; }
+    .navigation { display:flex; align-items:center; gap:30px; }
+    .navigation a { text-decoration:none; font-size:12px; font-weight:600; }
+    .navigation a:hover { text-decoration:underline; }
+    .navigation .nav-cta { padding:11px 16px; border:1px solid var(--ink); }
+    .hero { padding:46px 0 38px; display:grid; grid-template-columns:1fr 1fr; gap:58px; align-items:center; }
+    .eyebrow { font-size:10px; font-weight:700; letter-spacing:2px; line-height:1.6; text-transform:uppercase; }
+    .hero-kicker { margin:0 0 22px; color:var(--clay); display:flex; align-items:center; gap:9px; }
+    .hero-kicker::before { content:""; display:block; width:6px; height:6px; background:var(--clay); border-radius:50%; flex:none; }
+    h1 { margin:0 0 23px; font-family:Georgia,"Times New Roman",serif; font-weight:400; font-size:clamp(60px,7.25vw,100px); line-height:1.01; letter-spacing:-5px; }
+    h1 em { font-weight:400; color:var(--clay); }
+    .intro { max-width:370px; font-size:16px; line-height:1.75; color:var(--muted); margin:0 0 29px; }
+    .hero-action { display:flex; align-items:center; gap:22px; flex-wrap:wrap; }
+    .button { display:inline-flex; align-items:center; justify-content:center; gap:27px; padding:16px 21px; background:var(--ink); color:var(--paper); font-size:12px; font-weight:600; text-decoration:none; }
+    .button::after { content:"↗"; font-size:18px; line-height:12px; font-weight:400; }
+    .button:hover { background:#355846; }
+    .small-note { max-width:128px; font-size:11px; line-height:1.6; color:var(--muted); margin:0; }
+    .hero-meta { margin:35px 0 0; font-size:10px; letter-spacing:.65px; color:var(--muted); }
+    .artwork { margin:0; min-width:0; }
+    .image-wrap { position:relative; }
+    .hero-image { width:100%; height:auto; aspect-ratio:1/1; display:block; object-fit:cover; background:#ddd5bd; }
+    .image-stamp { position:absolute; top:19px; left:19px; margin:0; background:var(--paper); padding:9px 11px; color:var(--ink); font-size:9px; letter-spacing:1.5px; text-transform:uppercase; }
+    .image-caption { display:flex; justify-content:space-between; gap:16px; font-size:9px; letter-spacing:1.25px; color:var(--muted); margin:12px 0 0; text-transform:uppercase; }
+    .essentials { padding:26px 30px; background:var(--wash); display:grid; grid-template-columns:1fr 1fr 1fr; gap:22px; margin:0 0 62px; }
+    .detail { padding-left:24px; border-left:1px solid #c5cdbb; }
+    .detail:first-child { padding-left:0; border:0; }
+    .detail .eyebrow { font-size:9px; letter-spacing:1.6px; margin:0 0 8px; color:var(--muted); }
+    .detail h2 { font-family:Georgia,"Times New Roman",serif; font-size:25px; font-weight:400; letter-spacing:-.6px; margin:0 0 7px; line-height:1.18; }
+    .detail p:last-child { font-size:11px; line-height:1.6; margin:0; color:var(--muted); }
+    .weekend { display:grid; grid-template-columns:.8fr 1.2fr; gap:80px; padding:0 0 58px; }
+    .section-kicker { color:var(--clay); margin:0 0 14px; }
+    .section-title { font-family:Georgia,"Times New Roman",serif; font-size:40px; line-height:1.12; font-weight:400; letter-spacing:-1.6px; margin:0 0 17px; max-width:360px; }
+    .section-copy { margin:0; font-size:13px; line-height:1.8; color:var(--muted); max-width:330px; }
+    .schedule { list-style:none; padding:0; margin:0; }
+    .schedule li { padding:18px 0; border-top:1px solid var(--line); display:grid; grid-template-columns:66px 1fr; gap:22px; }
+    .schedule li:last-child { border-bottom:1px solid var(--line); }
+    .day { font-size:10px; text-transform:uppercase; letter-spacing:1px; color:var(--clay); line-height:2; }
+    .schedule strong { display:block; font-size:14px; font-weight:500; margin:0 0 6px; line-height:1.4; }
+    .schedule .description { display:block; font-size:12px; line-height:1.7; color:var(--muted); }
+    .invitation { border-top:1px solid var(--line); padding:39px 0; display:flex; align-items:center; justify-content:space-between; gap:32px; }
+    .invitation h2 { font-family:Georgia,"Times New Roman",serif; font-size:34px; font-weight:400; letter-spacing:-1.1px; margin:0 0 9px; }
+    .invitation p { font-size:12px; line-height:1.7; margin:0; color:var(--muted); max-width:580px; }
+    .text-link { font-size:12px; font-weight:600; flex-shrink:0; }
+    footer { min-height:70px; border-top:1px solid var(--line); display:flex; align-items:center; justify-content:space-between; gap:25px; }
+    footer p { color:var(--muted); font-size:10px; line-height:1.6; margin:0; }
+    footer .footer-brand { font-size:14px; font-weight:700; letter-spacing:-.5px; color:var(--ink); }
+    @media(min-width:1440px) { .hero { gap:75px; } }
+    @media(max-width:1080px) {
+      .page { padding:0 34px; }
+      .hero { gap:35px; padding-top:35px; }
+      h1 { font-size:76px; letter-spacing:-3.7px; }
+      .intro { font-size:14px; }
+      .hero-meta { margin-top:25px; }
+      .hero-kicker { margin-bottom:17px; }
+      .weekend { gap:45px; }
+    }
+    @media(max-width:820px) {
+      .page { padding:0 26px; }
+      .masthead { min-height:78px; }
+      .navigation { gap:20px; }
+      .hero { gap:25px; align-items:start; }
+      h1 { font-size:60px; letter-spacing:-3px; }
+      .hero-kicker { font-size:8px; letter-spacing:1.3px; margin-bottom:17px; }
+      .intro { font-size:13px; margin-bottom:21px; }
+      .hero-action { gap:13px; }
+      .button { padding:13px 15px; font-size:11px; gap:16px; }
+      .small-note { font-size:10px; max-width:110px; }
+      .hero-meta { font-size:9px; line-height:1.7; margin-top:22px; }
+      .image-stamp { top:12px; left:12px; font-size:8px; padding:8px; }
+      .image-caption { font-size:8px; letter-spacing:.7px; }
+      .essentials { padding:22px; gap:16px; margin-bottom:43px; }
+      .detail { padding-left:16px; }
+      .detail h2 { font-size:21px; }
+      .weekend { gap:35px; grid-template-columns:1fr 1.15fr; }
+      .section-title { font-size:32px; }
+      .schedule li { gap:14px; grid-template-columns:52px 1fr; }
+      .invitation h2 { font-size:29px; }
+    }
+    @media(max-width:620px) {
+      .page { padding:0 22px; }
+      .wordmark { font-size:23px; }
+      .brand-mark { width:28px; height:28px; }
+      .navigation a { font-size:11px; }
+      .navigation .nav-cta { display:none; }
+      .hero { grid-template-columns:1fr; gap:30px; padding:36px 0 29px; }
+      h1 { font-size:clamp(58px,14vw,83px); letter-spacing:-3px; margin-bottom:20px; }
+      .hero-kicker { font-size:9px; }
+      .intro { max-width:370px; font-size:14px; }
+      .hero-action { gap:20px; }
+      .hero-meta { margin-top:25px; }
+      .hero-image { aspect-ratio:1.15/1; }
+      .image-caption { font-size:8px; }
+      .essentials { grid-template-columns:1fr; padding:24px; gap:21px; margin-bottom:42px; }
+      .detail { padding:20px 0 0; border-left:0; border-top:1px solid #c5cdbb; }
+      .detail:first-child { padding:0; }
+      .detail h2 { font-size:26px; }
+      .weekend { grid-template-columns:1fr; gap:26px; padding-bottom:35px; }
+      .section-title { font-size:37px; max-width:300px; }
+      .section-copy { max-width:none; }
+      .schedule li { grid-template-columns:56px 1fr; gap:16px; }
+      .invitation { align-items:flex-start; flex-direction:column; gap:20px; padding:30px 0; }
+      .invitation h2 { font-size:32px; }
+      footer { padding:22px 0; align-items:flex-start; }
+      footer p:last-child { text-align:right; max-width:220px; }
+    }
+    @media(prefers-reduced-motion:reduce) { html { scroll-behavior:auto; } }
+    @media print {
+      .page { max-width:none; padding:0 20px; }
+      .masthead { min-height:65px; }
+      .hero { padding:25px 0; gap:35px; }
+      h1 { font-size:60px; }
+      .essentials { margin-bottom:30px; }
+      .weekend { padding-bottom:25px; }
+      .hero, .essentials, .schedule li, .invitation { break-inside:avoid; }
+      body { print-color-adjust:exact; -webkit-print-color-adjust:exact; }
+    }
+  </style>
+</head>
+<body>
+  <!--
+    SECOND PASS DEMO
+    A fictional retreat page, built entirely from static, source-authored HTML.
+    All styles and the opening illustration are embedded. No network or build step required.
+    Suggested recording:
+    1. Change the headline to "Make room for your next idea."
+    2. Change the date to "November 13-15" and capacity to "16 people".
+    3. Select the illustration and use Replace to choose the accompanying coast SVG.
+       Update the image alt text and caption to match.
+    4. Edit the call-to-action text, then use Undo and Redo.
+    5. Save with Cmd+S and switch to the mobile preview.
+    Keep any revised location or event details consistent across the page.
+  -->
+  <div class="page">
+    <header class="masthead">
+      <div class="identity">
+        <svg class="brand-mark" viewBox="0 0 40 40" aria-hidden="true">
+          <path d="M3 29L14 9l8 15 5-9 10 14" fill="none" stroke="currentColor" stroke-width="2.3"/>
+          <path d="M3 35h34M14 9v21M27 15v15" fill="none" stroke="currentColor" stroke-width="1.3"/>
+        </svg>
+        <p class="wordmark" id="brand">fieldwork</p>
+      </div>
+      <nav class="navigation" aria-label="Main navigation">
+        
+        
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero" aria-labelledby="headline">
+        <div class="hero-copy">
+          
+          <h1 id="headline">Good ideas<br>need <em>room</em></h1>
+          <p class="intro" id="intro">A quiet weekend in the mountains for people who make things. Bring a notebook, an unfinished idea, and a pair of walking shoes.</p>
+          <div class="hero-action">
+            <a class="button" href="#weekend" id="hero-cta">Explore the weekend</a>
+            
+          </div>
+          
+        </div>
+
+        <figure class="artwork">
+          <div class="image-wrap">
+            <img class="hero-image" id="retreat-image" width="1000" height="1000" alt="Illustrated mountain cabin beside a winding river, surrounded by pines under a terracotta sun." src="data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%221000%22%20height%3D%221000%22%20viewBox%3D%220%200%201000%201000%22%3E%0A%3Cdefs%3E%0A%20%20%3ClinearGradient%20id%3D%22sky%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20stop-color%3D%22%23e8d7b8%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23f3e9d5%22%2F%3E%3C%2FlinearGradient%3E%0A%20%20%3Cpattern%20id%3D%22paper%22%20width%3D%227%22%20height%3D%227%22%20patternUnits%3D%22userSpaceOnUse%22%3E%3Ccircle%20cx%3D%221%22%20cy%3D%222%22%20r%3D%22.7%22%20fill%3D%22%23223c32%22%20opacity%3D%22.08%22%2F%3E%3Ccircle%20cx%3D%225%22%20cy%3D%226%22%20r%3D%22.5%22%20fill%3D%22%23fff%22%20opacity%3D%22.3%22%2F%3E%3C%2Fpattern%3E%0A%20%20%3Cpattern%20id%3D%22wood%22%20width%3D%2214%22%20height%3D%2214%22%20patternUnits%3D%22userSpaceOnUse%22%3E%3Cpath%20d%3D%22M0%200V14%22%20stroke%3D%22%2371452f%22%20stroke-width%3D%222%22%20opacity%3D%22.2%22%2F%3E%3C%2Fpattern%3E%0A%20%20%3Cg%20id%3D%22pine%22%3E%3Cpath%20d%3D%22M0%200L-34%2076H-21L-48%20121H-28L-60%20167H-5V204H5V167H60L28%20121H48L21%2076H34Z%22%20fill%3D%22currentColor%22%2F%3E%3C%2Fg%3E%0A%3C%2Fdefs%3E%0A%3Cpath%20fill%3D%22url(%23sky)%22%20d%3D%22M0%200h1000v1000H0z%22%2F%3E%0A%3Ccircle%20cx%3D%22728%22%20cy%3D%22216%22%20r%3D%22108%22%20fill%3D%22%23cb744b%22%2F%3E%0A%3Cg%20fill%3D%22none%22%20stroke%3D%22%23f7ecd8%22%20stroke-width%3D%222%22%20opacity%3D%22.8%22%3E%3Ccircle%20cx%3D%22728%22%20cy%3D%22216%22%20r%3D%22130%22%2F%3E%3Ccircle%20cx%3D%22728%22%20cy%3D%22216%22%20r%3D%22144%22%2F%3E%3C%2Fg%3E%0A%3Cpath%20d%3D%22M0%20502L152%20334%20262%20432%20472%20191%20697%20478%20866%20316%201000%20418V1000H0Z%22%20fill%3D%22%23b0b49a%22%2F%3E%0A%3Cpath%20d%3D%22M332%20351L472%20191%20626%20386%20527%20337%20474%20268%20429%20339%20391%20320Z%22%20fill%3D%22%23f0e7d5%22%2F%3E%0A%3Cpath%20d%3D%22M0%20627L217%20423%20424%20641%20689%20411%201000%20630V1000H0Z%22%20fill%3D%22%23788a70%22%2F%3E%0A%3Cpath%20d%3D%22M0%20717Q232%20536%20479%20705T1000%20611V1000H0Z%22%20fill%3D%22%23496c59%22%2F%3E%0A%3Cpath%20d%3D%22M530%20674Q417%20736%20606%20792T565%201000H855Q920%20869%20668%20800T563%20677Z%22%20fill%3D%22%23b8c7b3%22%2F%3E%0A%3Cpath%20d%3D%22M542%20684Q484%20744%20632%20798T716%20973%22%20fill%3D%22none%22%20stroke%3D%22%23dae0c9%22%20stroke-width%3D%223%22%2F%3E%0A%3Cpath%20d%3D%22M0%20797Q251%20637%20497%20890L563%201000H0Z%22%20fill%3D%22%23254c3e%22%2F%3E%0A%3Cpath%20d%3D%22M1000%20737Q787%20684%20760%20842T799%201000H1000Z%22%20fill%3D%22%23315645%22%2F%3E%0A%3Cg%20color%3D%22%23294e3f%22%3E%0A%3Cuse%20href%3D%22%23pine%22%20transform%3D%22translate(65%20405)%20scale(1.5)%22%2F%3E%3Cuse%20href%3D%22%23pine%22%20transform%3D%22translate(145%20458)%20scale(1.14)%22%2F%3E%0A%3Cuse%20href%3D%22%23pine%22%20transform%3D%22translate(257%20564)%20scale(.66)%22%2F%3E%3Cuse%20href%3D%22%23pine%22%20transform%3D%22translate(365%20599)%20scale(.44)%22%2F%3E%0A%3Cuse%20href%3D%22%23pine%22%20transform%3D%22translate(936%20431)%20scale(1.44)%22%2F%3E%3Cuse%20href%3D%22%23pine%22%20transform%3D%22translate(834%20526)%20scale(.88)%22%2F%3E%0A%3Cuse%20href%3D%22%23pine%22%20transform%3D%22translate(747%20574)%20scale(.6)%22%2F%3E%0A%3C%2Fg%3E%0A%3Cpath%20d%3D%22M255%20756L355%20663%20475%20721%20375%20817Z%22%20fill%3D%22%23203e33%22%2F%3E%0A%3Cpath%20d%3D%22M275%20757L356%20682%20356%20842%20275%20807Z%22%20fill%3D%22%23c59162%22%2F%3E%0A%3Cpath%20d%3D%22M356%20682L450%20729V821L356%20842Z%22%20fill%3D%22%23ae724b%22%2F%3E%0A%3Cpath%20d%3D%22M356%20682L450%20729V821L356%20842Z%22%20fill%3D%22url(%23wood)%22%2F%3E%0A%3Cpath%20d%3D%22M274%20757L355%20663%20367%20669%20283%20768Z%22%20fill%3D%22%23e4c6a0%22%2F%3E%0A%3Cpath%20d%3D%22M307%20763L337%20734V821L307%20808Z%22%20fill%3D%22%23263f32%22%2F%3E%0A%3Cpath%20d%3D%22M377%20746L405%20755V786L377%20783Z%22%20fill%3D%22%23ebcc83%22%2F%3E%0A%3Cpath%20d%3D%22M390%20750V785M377%20767L405%20771%22%20stroke%3D%22%23765537%22%20stroke-width%3D%224%22%2F%3E%0A%3Cpath%20d%3D%22M432%20668V718L451%20728V676Z%22%20fill%3D%22%236b5843%22%2F%3E%0A%3Cpath%20d%3D%22M320%20846Q361%20870%20414%20932%22%20fill%3D%22none%22%20stroke%3D%22%23c4ba94%22%20stroke-width%3D%2217%22%2F%3E%0A%3Cg%20color%3D%22%23193d31%22%3E%3Cuse%20href%3D%22%23pine%22%20transform%3D%22translate(52%20663)%20scale(1.55)%22%2F%3E%3Cuse%20href%3D%22%23pine%22%20transform%3D%22translate(173%20754)%20scale(1.29)%22%2F%3E%3Cuse%20href%3D%22%23pine%22%20transform%3D%22translate(942%20714)%20scale(1.6)%22%2F%3E%3C%2Fg%3E%0A%3Cpath%20d%3D%22M0%20952Q290%20891%20458%201000H0Z%22%20fill%3D%22%23193d31%22%2F%3E%0A%3Cpath%20d%3D%22M598%20152l13-7%2013%207m-66%2018%2010-5%2010%205%22%20fill%3D%22none%22%20stroke%3D%22%2350634e%22%20stroke-width%3D%223%22%20stroke-linecap%3D%22round%22%2F%3E%0A%3Cpath%20fill%3D%22url(%23paper)%22%20d%3D%22M0%200h1000v1000H0z%22%2F%3E%0A%3C%2Fsvg%3E">
+            <p class="image-stamp" id="image-stamp">Outside looks good on you</p>
+          </div>
+          
+        </figure>
+      </section>
+
+      <section class="essentials" id="details" aria-label="Retreat details">
+        <div class="detail">
+          <p class="eyebrow">When</p>
+          <h2 id="retreat-date">October 16-20</h2>
+          <p id="retreat-duration">Friday afternoon to Tuesday lunch.</p>
+        </div>
+        <div class="detail">
+          <p class="eyebrow">Where</p>
+          <h2 id="retreat-location">Wood House</h2>
+          <p id="retreat-setting">A tucked-away lodge in the mountains.</p>
+        </div>
+        <div class="detail">
+          <p class="eyebrow">Who</p>
+          <h2 id="retreat-capacity">10 curious people</h2>
+          <p id="retreat-audience">Writers, designers, and people between ideas.</p>
+        </div>
+      </section>
+
+      <section class="weekend" id="weekend" aria-labelledby="weekend-heading">
+        <div>
+          
+          <h2 class="section-title" id="weekend-heading">Less on the agenda.<br>More on your mind.</h2>
+          <p class="section-copy" id="weekend-intro">There is time to work on something and time to leave it alone. Every session is optional. The coffee isn't going anywhere.</p>
+        </div>
+        <ol class="schedule" id="schedule">
+          <li id="friday"><span class="day">Friday</span><span><strong>Arrive. Set your bag down.</strong><span class="description">Check in, take a short walk, and meet everyone over a long dinner.</span></span></li>
+          <li id="saturday"><span class="day">Saturday</span><span><strong>Follow an idea for a while.</strong><span class="description">A slow morning, an open studio, and an afternoon with no fixed plan.</span></span></li>
+          <li id="sunday"><span class="day">Sunday</span><span><strong>Take something home.</strong><span class="description">Share what you've been making. Leave with a few notes and a new friend.</span></span></li>
+        </ol>
+      </section>
+
+      <section class="invitation" id="invitation" aria-labelledby="invitation-heading">
+        <div>
+          <h2 id="invitation-heading">Bring the idea you keep putting off.</h2>
+          <p id="invitation-copy">Meals, a room of your own, and space to work are part of the weekend. You bring the rest.</p>
+        </div>
+        <a href="#details" class="text-link" id="details-link">Revisit the details ↗</a>
+      </section>
+    </main>
+
+    <footer>
+      <p class="footer-brand" id="footer-brand">fieldwork</p>
+      
+    </footer>
+  </div>
+</body>
+</html>

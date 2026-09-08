@@ -62,7 +62,8 @@ reader.on('line', async (line) => {
   if (!message.method) return;
 
   if (message.method === 'initialize') send({ id: message.id, result: { userAgent: 'fake-codex' } });
-  if (message.method === 'account/read') send({ id: message.id, result: { account: { type: 'chatgpt', email: 'test@example.com' }, requiresOpenaiAuth: true } });
+  if (message.method === 'account/read') send({ id: message.id, result: { account: process.env.SECOND_PASS_FAKE_SIGNED_OUT === '1' ? null : { type: 'chatgpt', email: 'test@example.com' }, requiresOpenaiAuth: true } });
+  if (message.method === 'account/login/start') send({ id: message.id, result: { type: 'chatgpt', loginId: 'demo-login', authUrl: 'https://auth.openai.com/authorize?demo=true' } });
   if (message.method === 'thread/start') send({ id: message.id, result: { thread: thread('0198e998-7b74-7a80-8b0f-a334bd81d30f', message.params.cwd) } });
   if (message.method === 'thread/resume') {
     if (process.env.SECOND_PASS_FAKE_STALE_ROLLOUT === '1') {

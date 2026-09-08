@@ -267,7 +267,26 @@ export async function findHtmlDocumentForThread(thread: RawThread): Promise<stri
   return (await findHtmlDocumentsForThread(thread))[0] ?? null;
 }
 
-export async function findCodexExecutable(homeDirectory: string): Promise<{ executable: string; args: string[] }> {
+export function bundledCodexPath(resourcesPath: string, platform = process.platform, arch = process.arch): string | null {
+  const targets: Record<string, string> = {
+    'darwin-arm64': 'aarch64-apple-darwin',
+    'darwin-x64': 'x86_64-apple-darwin',
+    'win32-x64': 'x86_64-pc-windows-msvc',
+    'win32-arm64': 'aarch64-pc-windows-msvc',
+  };
+  const target = targets[`${platform}-${arch}`];
+  return target ? join(resourcesPath, 'codex', 'vendor', target, 'bin', platform === 'win32' ? 'codex.exe' : 'codex') : null;
+}
+
+export function isTrustedCodexLoginUrl(value: string): boolean {
+  try {
+    const url = new URL(value);
+    return url.protocol === 'https:' && !url.username && !url.password
+      && ['auth.openai.com', 'chatgpt.com'].includes(url.hostname);
+  } catch { return false; }
+}
+
+export async function findCodexExecutable(homeDirectory: string, resourcesPath?: string): Promise<{ executable: string; args: string[] }> {
   const configured = process.env.SECOND_PASS_CODEX_EXECUTABLE;
   const configuredArgs = process.env.SECOND_PASS_CODEX_ARGS;
   if (configured) {
@@ -284,7 +303,9 @@ export async function findCodexExecutable(homeDirectory: string): Promise<{ exec
     return { executable: configured, args };
   }
 
+  const bundled = resourcesPath ? bundledCodexPath(resourcesPath) : null;
   const candidates = [
+    ...(bundled ? [bundled] : []),
     join(homeDirectory, '.asdf', 'shims', 'codex'),
     join(homeDirectory, '.local', 'bin', 'codex'),
     '/opt/homebrew/bin/codex',
@@ -305,6 +326,9 @@ export function buildCodexSpawnEnvironment(homeDirectory: string, executable: st
   const inheritedPath = process.env.PATH?.split(delimiter).filter(Boolean) ?? [];
   const entries = [
     ...(isAbsolute(executable) ? [dirname(executable)] : []),
+    ...(isAbsolute(executable) ? [join(dirname(executable), '..', 'path')] : []),
+    ...(isAbsolute(executable) ? [join(dirname(executable), '..', 'codex-path')] : []),
+    ...(process.platform === 'win32' ? [] : [
     join(homeDirectory, '.asdf', 'shims'),
     join(homeDirectory, '.asdf', 'bin'),
     join(homeDirectory, '.local', 'bin'),
@@ -316,6 +340,7 @@ export function buildCodexSpawnEnvironment(homeDirectory: string, executable: st
     '/bin',
     '/usr/sbin',
     '/sbin',
+    ]),
     ...inheritedPath,
   ];
   return {
@@ -463,6 +488,7 @@ export class CodexWorkspaceBridge {
     private readonly version: string,
     private readonly homeDirectory: string,
     private readonly emit: (event: CodexEvent) => void,
+    private readonly options: { resourcesPath?: string; openSignIn?: (url: string) => Promise<void> } = {},
   ) {}
 
   async connect(request: CodexConnectRequest): Promise<CodexSession> {
@@ -477,6 +503,12 @@ export class CodexWorkspaceBridge {
         requiresOpenaiAuth?: boolean;
       }>('account/read', { refreshToken: false });
       if (accountResponse.requiresOpenaiAuth && !accountResponse.account) {
+        if (this.options.openSignIn) {
+          const login = await this.transport!.request<{ authUrl?: string }>('account/login/start', { type: 'chatgpt' });
+          if (!login.authUrl || !isTrustedCodexLoginUrl(login.authUrl)) throw new Error('Codex returned an unsupported sign-in address.');
+          await this.options.openSignIn(login.authUrl);
+          throw new Error('Complete sign-in in your browser, then select Connect again.');
+        }
         throw new Error('Sign in to Codex first, then try connecting again.');
       }
 
@@ -654,7 +686,7 @@ export class CodexWorkspaceBridge {
 
   private async ensureTransport(): Promise<void> {
     if (!this.transport) {
-      const invocation = await findCodexExecutable(this.homeDirectory);
+      const invocation = await findCodexExecutable(this.homeDirectory, this.options.resourcesPath);
       this.transport = new CodexAppServerTransport({
         ...invocation,
         env: buildCodexSpawnEnvironment(this.homeDirectory, invocation.executable),

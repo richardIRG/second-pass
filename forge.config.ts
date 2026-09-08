@@ -1,13 +1,25 @@
 import type { ForgeConfig } from '@electron-forge/shared-types';
+import { existsSync } from 'node:fs';
 import { MakerZIP } from '@electron-forge/maker-zip';
+import { MakerDMG } from '@electron-forge/maker-dmg';
+import { MakerSquirrel } from '@electron-forge/maker-squirrel';
 import { FusesPlugin } from '@electron-forge/plugin-fuses';
 import { VitePlugin } from '@electron-forge/plugin-vite';
 import { FuseV1Options, FuseVersion } from '@electron/fuses';
+
+if (process.env.SECOND_PASS_RELEASE === '1' && !existsSync('build/codex/vendor')) {
+  throw new Error('Run pnpm prepare:codex before packaging a release.');
+}
 
 const config: ForgeConfig = {
   packagerConfig: {
     asar: true,
     icon: 'assets/second-pass',
+    executableName: 'SecondPass',
+    appBundleId: 'com.richardirg.secondpass',
+    appCopyright: 'Copyright 2026 Richard Mancuso',
+    extraResource: existsSync('build/codex/vendor') ? ['build/codex'] : [],
+    ignore: [/^\/work($|\/)/, /^\/tests($|\/)/, /^\/docs($|\/)/, /^\/build($|\/)/, /^\/\.github($|\/)/, /^\/scripts($|\/)/],
     osxSign: {
       identity: '-',
       identityValidation: false,
@@ -20,7 +32,18 @@ const config: ForgeConfig = {
     },
   },
   rebuildConfig: {},
-  makers: [new MakerZIP({}, ['darwin'])],
+  makers: [
+    new MakerZIP({}, ['darwin']),
+    new MakerDMG({ name: 'Second Pass', format: 'ULFO', overwrite: true }),
+    new MakerSquirrel({
+      name: 'SecondPass',
+      authors: 'Richard Mancuso',
+      description: 'Edit text and images directly in HTML pages, with Codex beside you.',
+      setupExe: 'Second-Pass-Windows-x64-Setup.exe',
+      setupIcon: 'assets/second-pass.ico',
+      noMsi: true,
+    }),
+  ],
   plugins: [
     new VitePlugin({
       build: [

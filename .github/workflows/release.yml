@@ -1,0 +1,107 @@
+name: Build and release
+on:
+  workflow_dispatch:
+  push:
+    tags: ['v*']
+permissions:
+  contents: read
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  build:
+    name: ${{ matrix.label }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: macos-15
+            arch: arm64
+            label: Mac Apple silicon
+          - os: macos-15-intel
+            arch: x64
+            label: Mac Intel
+          - os: windows-latest
+            arch: x64
+            label: Windows
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 35
+    env:
+      SECOND_PASS_RELEASE: '1'
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: '24'
+          architecture: ${{ matrix.arch }}
+      - name: Install pnpm
+        run: npm install --global pnpm@10.18.2
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Check types and unit tests
+        run: |
+          pnpm typecheck
+          pnpm test
+      - name: Prepare the bundled Codex runtime
+        run: pnpm prepare:codex
+      - name: Build installers
+        run: pnpm make
+      - name: Test editing and Codex integration
+        run: pnpm exec playwright test
+      - name: Verify Mac app signature and disk image
+        if: runner.os == 'macOS'
+        run: |
+          codesign --verify --deep --strict --verbose=1 "out/Second Pass-darwin-${{ matrix.arch }}/Second Pass.app"
+          hdiutil verify "out/make/Second Pass.dmg"
+      - name: Verify Windows installer
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $installer = Get-ChildItem out/make -Recurse -Filter '*Setup.exe' | Select-Object -First 1
+          if (-not $installer) { throw 'Windows installer was not built.' }
+          $setup = Start-Process -FilePath $installer.FullName -ArgumentList '--silent' -Wait -PassThru
+          if ($setup.ExitCode -ne 0) { throw "Installer exited with $($setup.ExitCode)" }
+          $installed = Get-ChildItem "$env:LOCALAPPDATA/SecondPass/app-*/SecondPass.exe" | Select-Object -First 1
+          if (-not $installed) { throw 'Installed application was not found.' }
+          $app = Start-Process -FilePath $installed.FullName -PassThru
+          Start-Sleep -Seconds 8
+          if ($app.HasExited -and $app.ExitCode -ne 0) { throw 'Installed application failed to launch.' }
+          Get-Process SecondPass -ErrorAction SilentlyContinue | Stop-Process
+      - name: Prepare download names and checksums
+        run: node scripts/collect-release.mjs
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: second-pass-${{ runner.os }}-${{ matrix.arch }}
+          path: release-assets/*
+          if-no-files-found: error
+          retention-days: 14
+      - name: Preserve failure details
+        if: failure()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: test-results-${{ runner.os }}-${{ matrix.arch }}
+          path: work/playwright/test-results
+          retention-days: 7
+  publish:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          pattern: second-pass-*
+          path: release-assets
+          merge-multiple: true
+      - name: Publish all downloads together
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          gh release create "$RELEASE_TAG" release-assets/* \
+            --verify-tag --latest \
+            --title "Second Pass $RELEASE_TAG" \
+            --notes-file docs/release-notes.md
+

@@ -1,10 +1,12 @@
 import { mkdtemp, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { delimiter, join } from 'node:path';
 
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { buildCodexSpawnEnvironment, canReadThreadAfterResumeError, extractCodexThreadId, findHtmlDocumentForThread, findHtmlDocumentsForThread, isActiveWriterError, threadToCodexMessages } from '../src/lib/codex-app-server';
+import { bundledCodexPath, CodexWorkspaceBridge, isTrustedCodexLoginUrl, buildCodexSpawnEnvironment, canReadThreadAfterResumeError, extractCodexThreadId, findHtmlDocumentForThread, findHtmlDocumentsForThread, isActiveWriterError, threadToCodexMessages } from '../src/lib/codex-app-server';
+
+afterEach(() => vi.unstubAllEnvs());
 
 describe('Codex App Server helpers', () => {
   it('extracts UUIDv7 thread IDs from task links and raw values', () => {
@@ -15,13 +17,41 @@ describe('Codex App Server helpers', () => {
     expect(extractCodexThreadId('not a task link')).toBeNull();
   });
 
-  it('builds a Finder-safe PATH for asdf and Homebrew Codex installations', () => {
+  it.skipIf(process.platform === 'win32')('builds a Finder-safe PATH for asdf and Homebrew Codex installations', () => {
     const environment = buildCodexSpawnEnvironment('/Users/example', '/Users/example/.asdf/shims/codex');
-    const entries = environment.PATH?.split(':') ?? [];
+    const entries = environment.PATH?.split(delimiter) ?? [];
     expect(entries).toContain('/Users/example/.asdf/shims');
     expect(entries).toContain('/Users/example/.asdf/bin');
     expect(entries).toContain('/opt/homebrew/bin');
     expect(entries).toContain('/usr/bin');
+  });
+
+  it('includes the bundled binary and bundled tools in PATH', () => {
+    const executable = bundledCodexPath(tmpdir())!;
+    const entries = buildCodexSpawnEnvironment(tmpdir(), executable).PATH!.split(delimiter);
+    expect(entries[0]).toContain(`${process.platform === 'win32' ? '\\' : '/'}bin`);
+    expect(entries.some(entry => entry.endsWith('codex-path'))).toBe(true);
+    expect(entries.length).toBe(new Set(entries).size);
+  });
+
+  it('rejects lookalike and non-HTTPS sign-in addresses', () => {
+    expect(isTrustedCodexLoginUrl('https://auth.openai.com/authorize')).toBe(true);
+    expect(isTrustedCodexLoginUrl('https://chatgpt.com/auth/login')).toBe(true);
+    for (const url of ['https://auth.openai.com.attacker.example', 'http://auth.openai.com', 'file:///etc/passwd', 'https://person:secret@auth.openai.com']) {
+      expect(isTrustedCodexLoginUrl(url)).toBe(false);
+    }
+  });
+
+  it('opens browser sign-in when connecting from a fresh account', async () => {
+    vi.stubEnv('SECOND_PASS_CODEX_EXECUTABLE', process.execPath);
+    vi.stubEnv('SECOND_PASS_CODEX_ARGS', JSON.stringify([join(process.cwd(), 'tests/fixtures/fake-codex-app-server.mjs')]));
+    vi.stubEnv('SECOND_PASS_FAKE_SIGNED_OUT', '1');
+    const openSignIn = vi.fn().mockResolvedValue(undefined);
+    const bridge = new CodexWorkspaceBridge('test', tmpdir(), () => {}, { openSignIn });
+    try {
+      await expect(bridge.connect({ documentPath: join(tmpdir(), 'demo.html'), forceNew: true })).rejects.toThrow('Complete sign-in in your browser');
+      expect(openSignIn).toHaveBeenCalledWith('https://auth.openai.com/authorize?demo=true');
+    } finally { bridge.dispose(); }
   });
 
   it('recognizes the active-writer conflict returned by another Codex client', () => {

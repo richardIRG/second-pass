@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="1000" viewBox="0 0 1000 1000">
+<defs>
+<pattern id="grain" width="7" height="7" patternUnits="userSpaceOnUse"><circle cx="1" cy="2" r=".7" fill="#173c36" opacity=".08"/><circle cx="5" cy="6" r=".5" fill="#fff" opacity=".3"/></pattern>
+<pattern id="water" width="160" height="62" patternUnits="userSpaceOnUse"><path d="M8 26h82m29 16h37" stroke="#dbe2d0" stroke-width="2" opacity=".35"/></pattern>
+</defs>
+<path fill="#e7d6b7" d="M0 0h1000v1000H0z"/>
+<circle cx="690" cy="230" r="112" fill="#cc744b"/>
+<g fill="none" stroke="#f8ebd1" stroke-width="2"><circle cx="690" cy="230" r="137"/><circle cx="690" cy="230" r="152"/></g>
+<path d="M0 434L166 343 312 411 467 324 644 446 1000 408V1000H0Z" fill="#a1ae99"/>
+<path d="M0 454Q221 414 444 454T1000 439V1000H0Z" fill="#638f86"/>
+<path fill="url(#water)" d="M0 456h1000v544H0z"/>
+<path d="M0 426Q161 388 248 521T402 658Q485 677 535 736L363 1000H0Z" fill="#b6a37a"/>
+<path d="M0 429Q164 390 246 503T404 633Q469 650 489 682L255 868 0 832Z" fill="#46694f"/>
+<path d="M0 771Q209 748 326 868T481 1000H0Z" fill="#264d3e"/>
+<path d="M1000 648Q844 659 813 749T710 882Q649 945 682 1000H1000Z" fill="#bfae86"/>
+<path d="M1000 646Q853 664 843 749T763 896L1000 865Z" fill="#63764f"/>
+<path d="M488 695Q471 743 399 787T400 877m406-120q-17 99-89 125t-42 118" fill="none" stroke="#e4e4c8" stroke-width="7" stroke-linecap="round"/>
+<path d="M351 782q-73 43-28 90m204-78q-33 10-33 44m272-315h88m-110 24h29" fill="none" stroke="#c2d4c4" stroke-width="3"/>
+<path d="M114 527L191 471 290 521 210 578Z" fill="#26483b"/>
+<path d="M133 535L191 489V602L133 579Z" fill="#e7cfaa"/>
+<path d="M191 489L270 529V588L191 602Z" fill="#c99569"/>
+<path d="M215 543L243 550V570L215 567Z" fill="#24483d"/>
+<path d="M157 550L177 536V597L157 587Z" fill="#3b5946"/>
+<path d="M98 454Q89 508 77 522m-15-35q30-22 49 5" fill="none" stroke="#2c503e" stroke-width="10"/>
+<path d="M240 175l13-7 13 7m45 22 10-5 10 5m-102 26 10-5 10 5" fill="none" stroke="#566952" stroke-width="3" stroke-linecap="round"/>
+<path d="M551 543L565 482 570 543Z" fill="#f3e6c8"/><path d="M545 547H578L568 555H553Z" fill="#244f44"/>
+<path fill="url(#grain)" d="M0 0h1000v1000H0z"/>
+</svg>

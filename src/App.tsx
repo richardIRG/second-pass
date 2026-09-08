@@ -45,6 +45,7 @@ interface ConflictState { removed: boolean }
 
 const EMPTY_TIMELINE: Timeline = { entries: [{}], index: 0 };
 const EMPTY_PROJECT_TIMELINE: ProjectTimeline = { entries: [{}], index: 0 };
+const MODIFIER_LABEL = navigator.platform.includes('Mac') ? '⌘' : 'Ctrl+';
 
 type UiIconName =
   | 'codex'
@@ -177,7 +178,7 @@ function EmptyState({ recentFiles, codexStatus, codexError, onConnectCodex, onOp
         {codexError ? <div className="empty-connect-error" role="alert">{codexError}</div> : null}
         <div className="empty-divider"><span>or</span></div>
         <button type="button" className="secondary-button empty-open-button" onClick={onOpen}>Open HTML file</button>
-        <span className="empty-open-hint">Choose a file directly, press ⌘O, or drop one anywhere</span>
+        <span className="empty-open-hint">Choose a file directly, press {MODIFIER_LABEL}O, or drop one anywhere</span>
         {recentFiles.length > 0 ? (
           <section className="recent-files" aria-label="Recent files">
             <strong>Recent documents</strong>
@@ -389,7 +390,7 @@ function CodexPanel({
                   <IconButton label="Send to Codex" disabled={!draft.trim() || visualEditsPending} onClick={() => void sendDraft()}><UiIcon name="send" /></IconButton>
                 )}
               </div>
-              <small>⌘↵ to send</small>
+              <small>{MODIFIER_LABEL}Enter to send</small>
             </div>
           )}
         </>

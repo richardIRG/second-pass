@@ -5,6 +5,7 @@ import { pathToFileURL } from 'node:url';
 
 import type { FSWatcher } from 'chokidar';
 import chokidar from 'chokidar';
+import squirrelStartup from 'electron-squirrel-startup';
 import {
   app,
   BrowserWindow,
@@ -47,6 +48,9 @@ import type {
   VinextEditOperation,
   VinextProjectSession,
 } from './shared/types';
+
+if (squirrelStartup) app.quit();
+if (process.platform === 'win32') app.setAppUserModelId('com.squirrel.SecondPass.SecondPass');
 
 protocol.registerSchemesAsPrivileged([
   {
@@ -283,7 +287,7 @@ function sendCommand(command: AppCommand): void {
 function getCodexBridge(): CodexWorkspaceBridge {
   codexBridge ??= new CodexWorkspaceBridge(app.getVersion(), app.getPath('home'), (event) => {
     mainWindow?.webContents.send('codex:event', event);
-  });
+  }, { resourcesPath: process.resourcesPath, openSignIn: (url) => shell.openExternal(url) });
   return codexBridge;
 }
 
@@ -541,8 +545,11 @@ async function createWindow(): Promise<void> {
     height: 920,
     minWidth: 900,
     minHeight: 640,
-    titleBarStyle: 'hiddenInset',
-    trafficLightPosition: { x: 17, y: 19 },
+    ...(process.platform === 'darwin' ? {
+      titleBarStyle: 'hiddenInset' as const,
+      trafficLightPosition: { x: 17, y: 19 },
+    } : {}),
+    icon: join(__dirname, '../../assets/second-pass-mark.png'),
     backgroundColor: '#f4f3ef',
     webPreferences: {
       preload: join(__dirname, 'preload.js'),
@@ -593,7 +600,7 @@ async function createWindow(): Promise<void> {
   }
 }
 
-app.whenReady().then(async () => {
+if (!squirrelStartup) app.whenReady().then(async () => {
   protocol.handle('document-preview', async (request) => {
     const url = new URL(request.url);
     const id = url.pathname.replace(/^\/+/, '');

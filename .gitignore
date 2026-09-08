@@ -7,3 +7,9 @@ test-results/
 playwright-report/
 .DS_Store
 README 2.md
+build/
+release-assets/
+*.p12
+*.pfx
+.env
+.env.*
