@@ -1,7 +1,7 @@
 {
   "name": "second-pass",
   "productName": "Second Pass",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "Edit text and images directly in HTML pages, with Codex beside you.",
   "author": "Richard Mancuso",
   "homepage": "https://richardirg.github.io/second-pass/",
@@ -50,7 +50,7 @@
     "vitest": "4.1.11"
   },
   "pnpm": {
-    "onlyBuiltDependencies": ["electron", "macos-alias"],
+    "onlyBuiltDependencies": ["electron", "electron-winstaller", "fs-xattr", "macos-alias"],
     "peerDependencyRules": {
       "allowedVersions": {
         "@electron/fuses": "2.1.3"
